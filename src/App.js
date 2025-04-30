@@ -66,9 +66,12 @@ export default function Game() {
         setIsHistoryDescending(!isHistoryDescending);
     }
 
+    let indicesMoved = [];
     const moves = history.map((squares, move) => {
-
-        let description = move === currentMove ? `You are at move #${currentMove}` : (move > 0 ? `Go to move #${move}` : 'Go to game start');
+        const indexMove = squares.findIndex((square, index) => square && !indicesMoved.includes(index));
+        indicesMoved.push(indexMove);
+        const squareRowColStr = move > 0 ? ` ${squares[indexMove]} on (${Math.floor(indexMove / 3)}, ${indexMove % 3})` : '';
+        let description = move === currentMove ? `You are at move #${currentMove}:${squareRowColStr}` : (move > 0 ? `Go to move #${move}:${squareRowColStr}` : 'Go to game start');
         
         return (
             <li key={move}>
