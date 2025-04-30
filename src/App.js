@@ -44,6 +44,7 @@ export default function Game() {
 
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [currentMove, setCurrentMove] = useState(0);
+    const [isHistoryDescending, setIsHistoryDescending] = useState(false);
 
     const currentSquares = history[currentMove];
     const xIsNext = currentMove % 2 === 0;
@@ -56,6 +57,10 @@ export default function Game() {
 
     function jumpTo(nextMove) {
         setCurrentMove(nextMove);
+    }
+
+    function handleSwitchHistorySortingOrder() {
+        setIsHistoryDescending(!isHistoryDescending);
     }
 
     const moves = history.map((squares, move) => {
@@ -77,7 +82,8 @@ export default function Game() {
                 <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
             </div>
             <div className="game-info">
-                <ol>{moves}</ol>
+                <button onClick={handleSwitchHistorySortingOrder}>{isHistoryDescending ? 'Ascending' : 'Descending'}</button>
+                <ol>{isHistoryDescending ? moves.toReversed() : moves}</ol>
             </div>
         </div>
     );
