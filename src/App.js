@@ -22,7 +22,7 @@ function Board({xIsNext, squares, onPlay}) {
     }
 
     const [winner, winningLine] = calculateWinner(squares);
-    const isDraw = !squares.includes(null);
+    const isDraw = !winner && !squares.includes(null);
     const statusText = winner ? `Winner: ${winner}` : (isDraw ? 'Draw!' : `Next player: ${xIsNext ? "X" : "O"}`); 
 
     const boardRows = [];
