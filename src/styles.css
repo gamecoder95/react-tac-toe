@@ -70,6 +70,14 @@
     text-align: center;
     width: 34px;
   }
+
+  .square.win {
+    background: lawngreen;
+  }
+
+  .square.draw {
+    background: gray;
+  }
   
   .board-row:after {
     clear: both;

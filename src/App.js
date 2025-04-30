@@ -1,15 +1,17 @@
 import { useState } from 'react';
 
-function Square({value, onSquareClick}) {
+function Square({value, onSquareClick, isWinningSquare, isDraw}) {
+
+    const className = `square ${isWinningSquare ? 'win' : ''} ${isDraw ? 'draw' : ''}`;
     
-    return <button className="square" onClick={onSquareClick}>{value}</button>;
+    return <button className={className} onClick={onSquareClick}>{value}</button>;
 }
 
 function Board({xIsNext, squares, onPlay}) {
 
     function handleClick(i) {
 
-        if (squares[i] || calculateWinner(squares)) {
+        if (squares[i] || calculateWinner(squares)[0]) {
             return;
         }
 
@@ -19,23 +21,24 @@ function Board({xIsNext, squares, onPlay}) {
         onPlay(nextSquares);
     }
 
-    function getStatus() {
-        const winner = calculateWinner(squares);
-        return winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? "X" : "O"}`; 
-    }
+    const [winner, winningLine] = calculateWinner(squares);
+    const isDraw = !squares.includes(null);
+    const statusText = winner ? `Winner: ${winner}` : (isDraw ? 'Draw!' : `Next player: ${xIsNext ? "X" : "O"}`); 
 
     const boardRows = [];
     for (let i = 0; i < 9; i += 3) {
-        boardRows.push(<div className="board-row">
-            <Square value={squares[i]} onSquareClick={() => handleClick(i)} />
-            <Square value={squares[i + 1]} onSquareClick={() => handleClick(i + 1)} />
-            <Square value={squares[i + 2]} onSquareClick={() => handleClick(i + 2)} />
-        </div>);
+        boardRows.push(
+            <div className="board-row" key={i/3}>
+                <Square value={squares[i]} onSquareClick={() => handleClick(i)} isWinningSquare={winningLine.includes(i)} isDraw={isDraw} />
+                <Square value={squares[i + 1]} onSquareClick={() => handleClick(i + 1)} isWinningSquare={winningLine.includes(i + 1)} isDraw={isDraw} />
+                <Square value={squares[i + 2]} onSquareClick={() => handleClick(i + 2)} isWinningSquare={winningLine.includes(i + 2)} isDraw={isDraw} />
+            </div>
+        );
     }
     
     return (
     <>
-        <div className="status">{getStatus()}</div>
+        <div className="status">{statusText}</div>
         {boardRows}
     </>);
 }
@@ -99,9 +102,9 @@ function calculateWinner(squares) {
     for (let i = 0; i < lines.length; ++i) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] == squares[b] && squares[a] == squares[c]) {
-            return squares[a];
+            return [squares[a], lines[i]];
         }
     }
 
-    return null;
+    return [null, []];
 }
